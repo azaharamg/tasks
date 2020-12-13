@@ -16,12 +16,19 @@ export default {
 </script>
 
 <style>
+@import '../src/styles/variables.css';
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(---primaryFont);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  background: linear-gradient(var(--salmon), var(--grey));
+  height: 100vh;
 }
 </style>
