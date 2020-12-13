@@ -16,9 +16,9 @@ export default {
 </script>
 
 <style>
-@import '../src/styles/variables.css';
+@import "../src/styles/variables.css";
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -29,6 +29,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(var(--salmon), var(--grey));
-  height: 100vh;
+  min-height: 100vh;
 }
 </style>

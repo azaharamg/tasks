@@ -1,5 +1,5 @@
 <template>
-  <div class="task-list" id="app">
+  <div class="task-container" id="app">
     <header>
       <h1 class="title">Tasks</h1>
       <img class="title-img" src="@/assets/note-task.svg" alt="note-task" />
@@ -20,33 +20,46 @@
         <input class="button" type="submit" value="+" />
       </div>
       <p class="warning-msg" v-if="error !== ''">{{ error }}</p>
-      <ul class="list">
-        <li
-          class="task"
-          :class="{ completed: task.completed }"
-          v-for="(task, i) in tasks"
-          :key="'task' + i"
+
+      <!-- Check all tasks-->
+      <div class="tasks-list" v-if="tasks.length > 0">
+        <label class="check-all"
+          ><input
+            type="checkbox"
+            @click="checkAll"
+            :checked="areAllCompleted"
+          />{{ checkAllMessage }}</label
         >
-          <label :for="task.id" @click="completedTask(task.id)">
-            <input
-              type="checkbox"
-              name="task' + i"
-              :id="task.id"
-              value="task.text"
-              :checked="task.completed"
-            />
-          </label>
-          <span>{{ task.text }}</span>
-          <button
+
+        <!-- Tasks list -->
+        <ul class="list">
+          <li
+            class="task"
             :class="{ completed: task.completed }"
-            class="btn-trash"
-            @click.prevent="handleDelete(task.id)"
+            v-for="(task, i) in tasks"
+            :key="'task' + i"
           >
-            <ion-icon name="trash-outline"></ion-icon>
-          </button>
-          <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
-        </li>
-      </ul>
+            <label :for="task.id" @click="completedTask(task.id)">
+              <input
+                type="checkbox"
+                name="task' + i"
+                :id="task.id"
+                value="task.text"
+                :checked="task.completed"
+              />
+            </label>
+            <span>{{ task.text }}</span>
+            <button
+              :class="{ completed: task.completed }"
+              class="btn-trash"
+              @click.prevent="handleDelete(task.id)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+            <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
+          </li>
+        </ul>
+      </div>
     </form>
   </div>
 </template>
@@ -90,6 +103,9 @@ export default {
         this.tasks.splice(indexToRemove, 1);
       }
     },
+    checkAll(event) {
+      this.tasks.forEach((task) => (task.completed = event.target.checked));
+    },
   },
   computed: {
     totalCompletedTasks() {
@@ -102,6 +118,16 @@ export default {
         return completedTasks.length;
       }
     },
+    areAllCompleted() {
+      return this.tasks.every((task) => task.completed);
+    },
+    checkAllMessage() {
+      if (this.areAllCompleted) {
+        return "Mark all as undone";
+      }
+
+      return "Mark all as done";
+    },
   },
 };
 </script>
@@ -109,16 +135,16 @@ export default {
 <style>
 @import "../styles/variables.css";
 
-.task-list {
-  width: 800px;
-  max-width: 100%;
+.task-container {
   margin: 0px auto;
+  max-width: 100%;
+  width: 800px;
 }
 
 header {
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .title {
@@ -127,27 +153,64 @@ header {
 }
 
 .title-img {
-  width: 50px;
   transform: rotate(30deg);
+  width: 50px;
 }
 
 .form {
+  align-items: center;
+  color: var(--dark);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  color: var(--dark);
 }
 
-.input-add,
-.task {
+.input-add {
   background: white;
   border: none;
   border-radius: 5px;
-  padding: 0.5rem;
-  width: 40vw;
   box-shadow: 0px 10px 22px -1px rgba(0, 0, 0, 0.25);
   margin: 10px 0 20px 0;
+  padding: 0.5rem;
+  width: 350px;
+}
+
+.button {
+  background: var(--pink);
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 10px 22px -1px rgba(0, 0, 0, 0.25);
+  color: var(--white);
+  cursor: pointer;
+  font-weight: bold;
+  margin: 1rem 0 0 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.tasks-list {
+  background: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 10px 22px -1px rgba(0, 0, 0, 0.25);
+  margin: 10px 0 20px 0;
+  padding: 0.5rem;
+  width: 500px;
+}
+
+.check-all {
+  border-bottom: 5px solid var(--grey);
+  color: var(--pink);
+  font-weight: bold;
+  display: block;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+.task {
+  border-bottom: 4px double var(--grey);
+  display: block;
+  padding: 1rem 0;
+  width: 100%;
 }
 
 input[type="checkbox"] {
@@ -155,47 +218,29 @@ input[type="checkbox"] {
 }
 
 .date {
-  text-align: end;
   font-size: small;
   margin-top: 1rem;
-}
-
-.button {
-  background: var(--pink);
-  color: var(--white);
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  box-shadow: 0px 10px 22px -1px rgba(0, 0, 0, 0.25);
-  margin-top: 10px;
-  cursor: pointer;
+  text-align: end;
 }
 
 .list {
+  align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   list-style: none;
 }
 
-.task {
-  width: 30vw;
-  margin: 5px 0 5px 0;
-}
-
 .completed {
-  text-decoration: line-through;
-  color: var(--grey);
   background-color: var(--darkBlue);
+  color: var(--grey);
+  text-decoration: line-through;
 }
 
 .progress-bar {
-  display: flex;
   align-items: center;
   align-self: flex-end;
+  display: flex;
   margin: 20px;
 }
 
@@ -208,12 +253,12 @@ input[type="checkbox"] {
 }
 
 .btn-trash {
-  border: none;
-  position: relative;
   background: none;
+  border: none;
+  cursor: pointer;
   float: right;
   font-size: 16px;
-  cursor: pointer;
+  position: relative;
 }
 
 .btn-trash .completed {
