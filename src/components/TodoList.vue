@@ -26,9 +26,8 @@
           :class="{ completed: task.completed }"
           v-for="(task, i) in tasks"
           :key="'task' + i"
-          @click="completedTask(task.id)"
         >
-          <label :for="task.id">
+          <label :for="task.id" @click="completedTask(task.id)">
             <input
               type="checkbox"
               name="task' + i"
@@ -36,9 +35,16 @@
               value="task.text"
               :checked="task.completed"
             />
-            <span>{{ task.text }}</span>
-            <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
           </label>
+          <span>{{ task.text }}</span>
+          <button
+            :class="{ completed: task.completed }"
+            class="btn-trash"
+            @click.prevent="handleDelete(task.id)"
+          >
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+          <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
         </li>
       </ul>
     </form>
@@ -77,6 +83,12 @@ export default {
           task.completed = !task.completed;
         }
       });
+    },
+    handleDelete(taskId) {
+      const indexToRemove = this.tasks.findIndex((task) => task.id === taskId);
+      if (indexToRemove !== -1) {
+        this.tasks.splice(indexToRemove, 1);
+      }
     },
   },
   computed: {
@@ -145,6 +157,7 @@ input[type="checkbox"] {
 .date {
   text-align: end;
   font-size: small;
+  margin-top: 1rem;
 }
 
 .button {
@@ -192,5 +205,18 @@ input[type="checkbox"] {
 
 .warning-msg {
   margin: 20px 0;
+}
+
+.btn-trash {
+  border: none;
+  position: relative;
+  background: none;
+  float: right;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-trash .completed {
+  color: var(--grey);
 }
 </style>
