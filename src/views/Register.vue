@@ -29,6 +29,9 @@
         id="password-repeat"
         placeholder="Password"
       />
+      <p class="error" v-if="diffetentPassword">
+        Please make sure your passwords are the same.
+      </p>
       <input class="form-submit" type="submit" value="Sign Up" />
     </form>
   </div>
@@ -43,18 +46,25 @@ export default {
     password: "",
     passwordRepeat: "",
     error: false,
+    diffetentPassword: false,
   }),
   methods: {
     async register() {
-      try {
-        await auth.register(this.email, this.password);
-        const user = {
-          email: this.email,
-        };
-        auth.setUserLogged(user);
-        this.$router.push("/");
-      } catch (error) {
-        this.error = true;
+      if (this.password === this.passwordRepeat) {
+        this.diffetentPassword = false;
+        try {
+          await auth.register(this.email, this.password);
+          const user = {
+            email: this.email,
+          };
+          auth.setUserLogged(user);
+          this.$router.push("/");
+        } catch (error) {
+          this.error = true;
+        }
+      } else {
+        this.diffetentPassword = true;
+        return false;
       }
     },
   },
@@ -117,7 +127,7 @@ export default {
 }
 
 .error {
-  margin: 1rem 0 0;
+  margin-top: 3rem;
   text-align: center;
   color: var(--yellow);
 }
