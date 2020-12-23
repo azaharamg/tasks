@@ -1,74 +1,82 @@
 <template>
-  <div class="task-container" id="app">
-    <header>
-      <h1 class="title">Tasks</h1>
-      <img class="title-img" src="@/assets/note-task.svg" alt="note-task" />
-    </header>
-    <form class="form" @submit.prevent="createTask">
-      <div class="progress-bar">
-        <h3 class="title-progress">Progress</h3>
+  <div class="home">
+    <div class="navbar">
+      <h1 class="navbar-title" v-if="userLogged">
+        Hello {{ userLogged.name }}!
+      </h1>
+      <div class="navbar-progress">
+        <p class="navbar-progress-title">Progress</p>
         <p>{{ totalCompletedTasks }} / {{ tasks.length }}</p>
       </div>
-      <div>
-        <input
-          class="input-add"
-          type="text"
-          id="task"
-          v-model="newTask"
-          placeholder="Create a new task ..."
-        />
-        <input class="button" type="submit" value="+" />
-      </div>
-      <p class="warning-msg" v-if="error !== ''">{{ error }}</p>
+    </div>
+    <div class="task-container">
+      <header>
+        <h2 class="title">Tasks</h2>
+        <img class="title-img" src="@/assets/note-task.svg" alt="note-task" />
+      </header>
+      <form class="form" @submit.prevent="createTask">
+        <div>
+          <input
+            class="input-add"
+            type="text"
+            id="task"
+            v-model="newTask"
+            placeholder="Create a new task ..."
+          />
+          <input class="button" type="submit" value="+" />
+        </div>
+        <p class="warning-msg" v-if="error !== ''">{{ error }}</p>
 
-      <!-- Check all tasks-->
-      <div class="tasks-list" v-if="tasks.length > 0">
-        <label class="check-all"
-          ><input
-            type="checkbox"
-            @click="checkAll"
-            :checked="areAllCompleted"
-          />{{ checkAllMessage }}</label
-        >
-
-        <!-- Tasks list -->
-        <ul class="list">
-          <li
-            class="task"
-            :class="{ completed: task.completed }"
-            v-for="(task, i) in tasks"
-            :key="'task' + i"
+        <!-- Check all tasks-->
+        <div class="tasks-list" v-if="tasks.length > 0">
+          <label class="check-all"
+            ><input
+              type="checkbox"
+              @click="checkAll"
+              :checked="areAllCompleted"
+            />{{ checkAllMessage }}</label
           >
-            <label :for="task.id" @click="completedTask(task.id)">
-              <input
-                type="checkbox"
-                name="task' + i"
-                :id="task.id"
-                value="task.text"
-                :checked="task.completed"
-              />
-            </label>
-            <span>{{ task.text }}</span>
-            <button
+
+          <!-- Tasks list -->
+          <ul class="list">
+            <li
+              class="task"
               :class="{ completed: task.completed }"
-              class="btn-trash"
-              @click.prevent="handleDelete(task.id)"
+              v-for="(task, i) in tasks"
+              :key="'task' + i"
             >
-              <ion-icon name="trash-outline"></ion-icon>
-            </button>
-            <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
-          </li>
-        </ul>
-      </div>
-    </form>
+              <label :for="task.id" @click="completedTask(task.id)">
+                <input
+                  type="checkbox"
+                  name="task' + i"
+                  :id="task.id"
+                  value="task.text"
+                  :checked="task.completed"
+                />
+              </label>
+              <span>{{ task.text }}</span>
+              <button
+                :class="{ completed: task.completed }"
+                class="btn-trash"
+                @click.prevent="handleDelete(task.id)"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+              <p class="date">Created: {{ new Date().toLocaleDateString() }}</p>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
 import { v4 as uuidv4 } from "uuid";
+import auth from "@/authentication/auth";
 
 export default {
-  name: "TodoList",
+  name: "Home",
   data: () => ({
     newTask: "",
     tasks: [],
@@ -127,6 +135,9 @@ export default {
       }
 
       return "Mark all as done";
+    },
+    userLogged() {
+      return auth.getUserLogged();
     },
   },
 };
@@ -237,14 +248,26 @@ input[type="checkbox"] {
   text-decoration: line-through;
 }
 
-.progress-bar {
-  align-items: center;
-  align-self: flex-end;
+.navbar {
   display: flex;
-  margin: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 2rem 2rem 0 0;
 }
 
-.title-progress {
+.navbar-title {
+  text-transform: capitalize;
+  color: var(--darkGreen);
+}
+
+.navbar-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-progress-title {
   margin-right: 0.5rem;
 }
 

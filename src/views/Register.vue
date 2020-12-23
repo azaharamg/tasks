@@ -18,8 +18,10 @@
         type="password"
         id="password"
         placeholder="Password"
+      />
+      <label class="form-label" for="#password-repeat"
+        >Repeat the password:</label
       >
-      <label class="form-label" for="#password-repeat">Repeat the password:</label>
       <input
         v-model="passwordRepeat"
         class="form-input"
@@ -40,18 +42,22 @@ export default {
     email: "",
     password: "",
     passwordRepeat: "",
-    error: false
+    error: false,
   }),
   methods: {
     async register() {
       try {
         await auth.register(this.email, this.password);
-        this.$router.push("/")
+        const user = {
+          email: this.email,
+        };
+        auth.setUserLogged(user);
+        this.$router.push("/");
       } catch (error) {
-         this.error = true;
+        this.error = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

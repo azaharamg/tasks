@@ -19,9 +19,7 @@
         id="password"
         placeholder="Password"
       />
-      <p v-if="error" class="error">
-        Invalid Email or Password. Try again!
-      </p>
+      <p v-if="error" class="error">Invalid Email or Password. Try again!</p>
       <input class="form-submit" type="submit" value="Login" />
     </form>
   </div>
@@ -31,22 +29,28 @@
 <script>
 import auth from "@/authentication/auth";
 export default {
-    name: "Login",
+  name: "Login",
   data: () => ({
     email: "",
     password: "",
-    error: false
+    error: false,
   }),
   methods: {
     async login() {
       try {
         await auth.login(this.email, this.password);
+        const user = {
+          name: this.email.split(".")[0],
+          email:  this.email,
+        };
+        auth.setUserLogged(user);
         this.$router.push("/");
       } catch (error) {
+        console.log(error);
         this.error = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
