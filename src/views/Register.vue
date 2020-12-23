@@ -18,10 +18,8 @@
         type="password"
         id="password"
         placeholder="Password"
-      />
-      <label class="form-label" for="#password-repeat"
-        >Repite la contraeña:</label
       >
+      <label class="form-label" for="#password-repeat">Repeat the password:</label>
       <input
         v-model="passwordRepeat"
         class="form-input"
@@ -35,20 +33,25 @@
 </template>
 
 <script>
+import auth from "@/authentication/auth";
 export default {
   name: "Register",
   data: () => ({
     email: "",
     password: "",
     passwordRepeat: "",
+    error: false
   }),
   methods: {
-    register() {
-      console.log(this.email);
-      console.log(this.password);
-      console.log(this.passwordRepeat);
-    },
-  },
+    async register() {
+      try {
+        await auth.register(this.email, this.password);
+        this.$router.push("/")
+      } catch (error) {
+         this.error = true;
+      }
+    }
+  }
 };
 </script>
 
@@ -109,6 +112,7 @@ export default {
 
 .error {
   margin: 1rem 0 0;
-  color: var(--pink);
+  text-align: center;
+  color: var(--yellow);
 }
 </style>

@@ -20,7 +20,7 @@
         placeholder="Password"
       />
       <p v-if="error" class="error">
-        Has introducido mal el email o la contraseña.
+        Invalid Email or Password. Try again!
       </p>
       <input class="form-submit" type="submit" value="Login" />
     </form>
@@ -29,19 +29,24 @@
 
 
 <script>
+import auth from "@/authentication/auth";
 export default {
-  name: "Login",
+    name: "Login",
   data: () => ({
     email: "",
     password: "",
-    error: false,
+    error: false
   }),
   methods: {
-    login() {
-      console.log(this.email);
-      console.log(this.password);
-    },
-  },
+    async login() {
+      try {
+        await auth.login(this.email, this.password);
+        this.$router.push("/");
+      } catch (error) {
+        this.error = true;
+      }
+    }
+  }
 };
 </script>
 
@@ -100,6 +105,7 @@ export default {
 }
 .error {
   margin: 1rem 0 0;
-  color: var(--pink);
+  color: var(--yellow);
+  text-align: center;
 }
 </style>
